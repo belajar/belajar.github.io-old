@@ -4,7 +4,7 @@
   
   <link href="/atom.xml" rel="self"/>
   <link href="http://belajar.github.io/"/>
-  <updated>2015-05-31T08:02:44.000Z</updated>
+  <updated>2015-05-31T08:05:21.000Z</updated>
   <id>http://belajar.github.io/</id>
   
   <author>
@@ -16,10 +16,10 @@
   
   <entry>
     <title><![CDATA[Connect ke MySQL melalui SSL/TLS]]></title>
-    <link href="http://belajar.github.io/DevOps/connect-mysql-melalui-ssl-tls.html"/>
-    <id>http://belajar.github.io/DevOps/connect-mysql-melalui-ssl-tls.html</id>
+    <link href="http://belajar.github.io/devops/connect-mysql-melalui-ssl-tls.html"/>
+    <id>http://belajar.github.io/devops/connect-mysql-melalui-ssl-tls.html</id>
     <published>2015-05-31T07:44:24.000Z</published>
-    <updated>2015-05-31T08:02:44.000Z</updated>
+    <updated>2015-05-31T08:05:21.000Z</updated>
     <content type="html"><![CDATA[<p>Mulakan dengan menjana certificate dalam folder <code>/etc/ssl/mysql</code>:-</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># Generate a CA key and certificate with SHA1 digest&#10;&#10;openssl genrsa 2048 &#62; ca-key.pem;&#10;openssl req -sha1 -new -x509 -nodes -days 3650 -key ca-key.pem &#62; ca-cert.pem;&#10;&#10;# Create server key and certficate with SHA1 digest, sign it and convert&#10;# the RSA key from PKCS #8 (OpenSSL 1.0 and newer) to the old PKCS #1 format&#10;&#10;openssl req -sha1 -newkey rsa:2048 -days 3650 -nodes -keyout server-key.pem &#62; server-req.pem;&#10;openssl x509 -sha1 -req -in server-req.pem -days 3650 -CA ca-cert.pem -CAkey ca-key.pem -set_serial 01 &#62; server-cert.pem;&#10;openssl rsa -in server-key.pem -out server-key.pem;&#10;&#10;# Create client key and certificate with SHA digest, sign it and convert&#10;# the RSA key from PKCS #8 (OpenSSL 1.0 and newer) to the old PKCS #1 format&#10;&#10;openssl req -sha1 -newkey rsa:2048 -days 3650 -nodes -keyout client-key.pem &#62; client-req.pem;&#10;openssl x509 -sha1 -req -in client-req.pem -days 3650 -CA ca-cert.pem -CAkey ca-key.pem -set_serial 01 &#62; client-cert.pem;&#10;openssl rsa -in client-key.pem -out client-key.pem;</span><br></pre></td></tr></table></figure>
 <p>Sebelum kita enable SSL pada server ini, tambah satu user baru yang perlukan ssl untuk berhubung. Jika user tersebut cuba connect tanpa menggunakan ssl, mysql akan <em>reject</em> connection tersebut.</p>
@@ -48,7 +48,7 @@
     
       <category term="ssl" scheme="http://belajar.github.io/tags/ssl/"/>
     
-      <category term="DevOps" scheme="http://belajar.github.io/categories/DevOps/"/>
+      <category term="Devops" scheme="http://belajar.github.io/categories/devops/"/>
     
   </entry>
   
