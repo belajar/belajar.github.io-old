@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>[Draf] - Menguruskan Libraries/Dependencies | Belajar Programming</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Setiap projek programming sama ada besar atau kecil biasanya tidak hanya mengandungi kod-kod
+aturcara yang ditulis oleh programmer itu sahaja. Ia juga akan turut mengandungi kod aturcara
+yang ditulis">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Draf] - Menguruskan Libraries/Dependencies">
+<meta property="og:url" content="http://belajar.github.io/programming/urus-libraries.html">
+<meta property="og:site_name" content="Belajar Programming">
+<meta property="og:description" content="Setiap projek programming sama ada besar atau kecil biasanya tidak hanya mengandungi kod-kod
+aturcara yang ditulis oleh programmer itu sahaja. Ia juga akan turut mengandungi kod aturcara
+yang ditulis">
+<meta property="og:image" content="http://i.imgur.com/8tz9TBH.png">
+<meta property="og:updated_time" content="2015-05-31T07:36:37.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[Draf] - Menguruskan Libraries/Dependencies">
+<meta name="twitter:description" content="Setiap projek programming sama ada besar atau kecil biasanya tidak hanya mengandungi kod-kod
+aturcara yang ditulis oleh programmer itu sahaja. Ia juga akan turut mengandungi kod aturcara
+yang ditulis">
+  
+  
+
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+</head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <h1 class="logo-wrap">
+            <a href="/" class="logo"></a>
+          </h1>
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+                <li class="main-nav-list-item" ><a class="main-nav-list-link" href="/">Home</a></li>
+              
+                    <ul class="main-nav-list"><li class="main-nav-list-item"><a class="main-nav-list-link" href="/categories/DevOps/">DevOps</a></li><li class="main-nav-list-item"><a class="main-nav-list-link" href="/categories/devops/">Devops</a></li><li class="main-nav-list-item"><a class="main-nav-list-link" href="/categories/javascript/">JavaScript</a></li><li class="main-nav-list-item"><a class="main-nav-list-link" href="/categories/php/">PHP</a></li><li class="main-nav-list-item"><a class="main-nav-list-link" href="/categories/programming/">Programming</a></li><li class="main-nav-list-item"><a class="main-nav-list-link" href="/categories/python/">Python</a></li></ul>
+                  
+                <li class="main-nav-list-item" ><a class="main-nav-list-link" href="/penulis">Penulis</a></li>
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><input type="hidden" name="sitesearch" value="http://belajar.github.io"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/programming/">Programming</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-urus-libraries.html" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      [Draf] - Menguruskan Libraries/Dependencies
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/programming/urus-libraries.html" class="article-date">
+  <time datetime="2015-03-28T16:00:00.000Z" itemprop="datePublished">2015-03-29</time>
+</a>
+      </p>
+      <div class="article-entry" itemprop="articleBody">
+        <p>Setiap projek <em>programming</em> sama ada besar atau kecil biasanya tidak hanya mengandungi kod-kod
+aturcara yang ditulis oleh <em>programmer</em> itu sahaja. Ia juga akan turut mengandungi kod aturcara
+yang ditulis oleh pihak ketiga.</p>
+<p>Ini kerana kebanyakkan masalah umum dalam <em>programming</em> biasanya sudah ada penyelesaianya. Dalam
+erti kata lain, sudah wujud kod yang ditulis oleh <em>programmer</em> lain yang dapat menyelesaikan
+masalah tersebut. Apa yang perlu dilakukan adalah mencari kod-kod tersebut dan seterusnya memasukkan
+kod tersebut bersama-sama aturcara yang kita sedang tulis ini.</p>
+<a id="more"></a>
+<p>Setiap bahasa pengaturcaraan mempunyai mekanisma tersendiri untuk memasukkan kod pihak ketiga ini ke dalam
+aturcara kita. Ia biasanya dapat dikenali melalui fungsi seperti <code>import</code>, <code>require</code>, <code>include</code>, <code>load</code>,
+<code>use</code> dan sebagainya.</p>
+<p>Pada mulanya, proses mencari kod-kod pihak ketiga atau biasanya dipanggil <em>libraries</em> ini dilakukan secara
+manual. Maknanya, jika <em>programmer</em> A memerlukan kod berkaitan pemprosesan fail CSV, maka dia mungkin akan
+memulakan proses pencarian di laman enjin carian (<em>search engine</em>) atau bertanyakan di forum-forum berkaitan.
+Proses manual ini pada mulanya memadai namun masalah bermula apabila kod di dalam <em>libraries</em> ini turut
+bergantung kepada kod-kod lain.</p>
+<p>Contohnya A mungkin terjumpa kod <code>easycsv.php</code>. Dia pun memasukkan kod <code>easycsv.php</code> ini ke dalam kod beliau
+tetapi mendapat <em>error</em> seperti:-</p>
+<pre><code>Warning: <span class="built_in">include</span>(basecsv.php): failed <span class="built_in">to</span> <span class="built_in">open</span> stream: No such <span class="built_in">file</span> <span class="operator">or</span> <span class="built_in">directory</span> <span class="operator">in</span> ..
+</code></pre><p>Rupa-rupanya kod <code>easycsv.php</code> turut bergantung kepada kod <code>basecsv.php</code> yang ditulis oleh programmer lain.
+Ini bermakna A perlu kembali mencari di mana hendak mendapatkan kod <code>basecsv.php</code> ini. Jika hanya melibatkan
+satu atau dua <em>libraries</em> sahaja, ia mungkin tidak begitu menyusahkan tapi apabila melibatkan jumlah <em>external
+libraries</em> yang banyak, satu solusi yang lebih baik amat diperlukan.</p>
+<p>Ketiadaan cara yang khusus untuk menyelesaikan masalah di atas akan mendorong <em>programmer</em> untuk mengambil
+tindakan seperti:-</p>
+<ul>
+<li>Tidak menggunakan <em>external libraries</em> - mendorong kepada <em>re-inventing the wheel</em>.</li>
+<li>Tidak mengemaskini <em>external libraries</em> yang digunakan kerana ia memerlukan sekali lagi proses mencari kemaskini
+yang baru.</li>
+<li><em>Copy-and-paste</em> kod antara projek.</li>
+</ul>
+<p>Jika diperhatikan pada proses mencari <em>libraries</em> di atas, kita akan dapati ianya adalah satu bentuk aktiviti rutin yang berulang dan hampir sama. Yang berbeza hanyalah pada nama <em>libraries</em> dan di mana ia dapat diperolehi. Jika <em>libraries</em> ini dapat dikumpulkan di satu tempat dan disusun dalam susunan tertentu, satu program khas dapat ditulis untuk mencari dan memasukkan <em>libraries</em> tersebut ke dalam aplikasi yang kita sedang bina. Daripada sinilah lahirnya konsep <em>package management</em>. </p>
+<p>Masalah <em>A depend on B and B depend on C</em> ini merupakan satu masalah klasik dalam Sains Komputer dan pelbagai
+<em>algorithm</em> telah pun dibina untuk menyelesaikan masalah ini.</p>
+<p><img src="http://i.imgur.com/8tz9TBH.png" class="img-displayed">
+<span class="img-caption"><a href="http://www.electricmonk.nl/log/2008/08/07/dependency-resolving-algorithm/" target="_blank" rel="external">http://www.electricmonk.nl/log/2008/08/07/dependency-resolving-algorithm/</a></span></p>
+<p>Berasaskan <em>algorithm</em> ini, setiap bahasa pengaturcaraan mempunyai <em>tools</em> tersendiri untuk menguruskan <em>libraries
+dependencies</em> ini. Berikut disenaraikan beberapa <em>tools</em> berkenaan:-</p>
+<ul>
+<li>Python - PIP</li>
+<li>PHP - Composer</li>
+<li>.NET - Nuget</li>
+<li>JavaScript - npm, bower</li>
+<li>Haskell - Cabal</li>
+<li>Lua - Luarocks</li>
+<li>Ruby - Rubygems, bundler</li>
+<li>Perl - CPAN</li>
+</ul>
+<h2 id="Rujukan">Rujukan</h2><ul>
+<li><a href="http://en.wikipedia.org/wiki/Dependency_graph" target="_blank" rel="external">http://en.wikipedia.org/wiki/Dependency_graph</a></li>
+<li><a href="https://en.opensuse.org/openSUSE:Libzypp_satsolver" target="_blank" rel="external">https://en.opensuse.org/openSUSE:Libzypp_satsolver</a></li>
+<li><a href="http://sahandsaba.com/understanding-sat-by-implementing-a-simple-sat-solver-in-python.html" target="_blank" rel="external">http://sahandsaba.com/understanding-sat-by-implementing-a-simple-sat-solver-in-python.html</a></li>
+</ul>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://belajar.github.io/programming/urus-libraries.html" data-id="ciac60k9x0008cmvdhj5ee7qd" class="article-share-link">Share</a>
+        
+          <a href="http://belajar.github.io/programming/urus-libraries.html#comments" class="article-comment-link">Comments</a>
+        
+        
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>follow:</p>
+    <ul class="social-links">
+      
+        <li><a class="social-tooltip" title="facebook" href="https://www.facebook.com/groups/belajarprogramming/" target="_blank"><i id="icon-facebook" class="icon"></i></a></li>
+      
+        <li><a class="social-tooltip" title="rss" href="/atom.xml" target="_blank"><i id="icon-rss" class="icon"></i></a></li>
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/javascript/memulakan-pengaturcaraan-dalam-javascript.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">newer</strong>
+      <p class="article-nav-title">
+        
+          Memulakan pengaturcaraan dalam JavaScript
+        
+      </p>
+      <i class="icon" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/php/pengenalan-kepada-composer.html" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">older</strong>
+      <p class="article-nav-title">PHP: Pengenalan kepada Composer</p>
+      <i class="icon" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+      
+  <div class="widget-wrap widget-list">
+    <h3 class="widget-title">categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/DevOps/">DevOps</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/devops/">Devops</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/javascript/">JavaScript</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/">PHP</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/programming/">Programming</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">Python</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget-wrap widget-float">
+    <h3 class="widget-title">tag cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/bi/" style="font-size: 10px;">bi</a> <a href="/tags/cname/" style="font-size: 10px;">cname</a> <a href="/tags/django/" style="font-size: 10px;">django</a> <a href="/tags/dns/" style="font-size: 10px;">dns</a> <a href="/tags/mysql/" style="font-size: 10px;">mysql</a> <a href="/tags/php/" style="font-size: 10px;">php</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/ssl/" style="font-size: 10px;">ssl</a>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget-wrap">
+    <h3 class="widget-title">recents</h3>
+    <div class="widget">
+      <ul id="recent-post" class="no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/DevOps/">DevOps</a></p>
+              <p class="item-title"><a href="/DevOps/connect-mysql-melalui-ssl-tls.html" class="title">Connect ke MySQL melalui SSL/TLS</a></p>
+              <p class="item-date"><time datetime="2015-05-31T07:44:24.000Z" itemprop="datePublished">2015-05-31</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/programming/">Programming</a></p>
+              <p class="item-title"><a href="/programming/kenapa-kena-belajar-bahasa-inggeris.html" class="title">Kenapa Kena Belajar Bahasa Inggeris ?</a></p>
+              <p class="item-date"><time datetime="2015-05-23T21:28:44.000Z" itemprop="datePublished">2015-05-24</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/devops/">Devops</a></p>
+              <p class="item-title"><a href="/devops/qna-soalan-dns-cname.html" class="title">QnA: Soalan berkaitan DNS, CNAME</a></p>
+              <p class="item-date"><time datetime="2015-05-19T02:02:51.000Z" itemprop="datePublished">2015-05-19</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/python/">Python</a></p>
+              <p class="item-title"><a href="/python/bagaimana-web-development-dalam-python.html" class="title">Bagaimana web development dalam Python ?</a></p>
+              <p class="item-date"><time datetime="2015-05-18T18:56:39.000Z" itemprop="datePublished">2015-05-19</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/javascript/">JavaScript</a></p>
+              <p class="item-title"><a href="/javascript/4-cara-define-function.html" class="title">4 Cara Define Function</a></p>
+              <p class="item-date"><time datetime="2015-03-30T16:00:00.000Z" itemprop="datePublished">2015-03-31</time></p>
+            </div>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon" id="icon-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2015 Kamal Mustafa</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'belajarprogramming';
+  
+  var disqus_url = 'http://belajar.github.io/programming/urus-libraries.html';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+<script src="/js/html-patch.js" type="text/javascript"></script>
+<script src="/js/script.js" type="text/javascript"></script>
+
+  </div>
+</body>
+</html>

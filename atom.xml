@@ -1,0 +1,481 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title><![CDATA[Belajar Programming]]></title>
+  
+  <link href="/atom.xml" rel="self"/>
+  <link href="http://belajar.github.io/"/>
+  <updated>2015-05-31T08:02:44.000Z</updated>
+  <id>http://belajar.github.io/</id>
+  
+  <author>
+    <name><![CDATA[Kamal Mustafa]]></name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[Connect ke MySQL melalui SSL/TLS]]></title>
+    <link href="http://belajar.github.io/DevOps/connect-mysql-melalui-ssl-tls.html"/>
+    <id>http://belajar.github.io/DevOps/connect-mysql-melalui-ssl-tls.html</id>
+    <published>2015-05-31T07:44:24.000Z</published>
+    <updated>2015-05-31T08:02:44.000Z</updated>
+    <content type="html"><![CDATA[<p>Mulakan dengan menjana certificate dalam folder <code>/etc/ssl/mysql</code>:-</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># Generate a CA key and certificate with SHA1 digest&#10;&#10;openssl genrsa 2048 &#62; ca-key.pem;&#10;openssl req -sha1 -new -x509 -nodes -days 3650 -key ca-key.pem &#62; ca-cert.pem;&#10;&#10;# Create server key and certficate with SHA1 digest, sign it and convert&#10;# the RSA key from PKCS #8 (OpenSSL 1.0 and newer) to the old PKCS #1 format&#10;&#10;openssl req -sha1 -newkey rsa:2048 -days 3650 -nodes -keyout server-key.pem &#62; server-req.pem;&#10;openssl x509 -sha1 -req -in server-req.pem -days 3650 -CA ca-cert.pem -CAkey ca-key.pem -set_serial 01 &#62; server-cert.pem;&#10;openssl rsa -in server-key.pem -out server-key.pem;&#10;&#10;# Create client key and certificate with SHA digest, sign it and convert&#10;# the RSA key from PKCS #8 (OpenSSL 1.0 and newer) to the old PKCS #1 format&#10;&#10;openssl req -sha1 -newkey rsa:2048 -days 3650 -nodes -keyout client-key.pem &#62; client-req.pem;&#10;openssl x509 -sha1 -req -in client-req.pem -days 3650 -CA ca-cert.pem -CAkey ca-key.pem -set_serial 01 &#62; client-cert.pem;&#10;openssl rsa -in client-key.pem -out client-key.pem;</span><br></pre></td></tr></table></figure>
+<p>Sebelum kita enable SSL pada server ini, tambah satu user baru yang perlukan ssl untuk berhubung. Jika user tersebut cuba connect tanpa menggunakan ssl, mysql akan <em>reject</em> connection tersebut.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&#62; create database test_ssl;&#10;Query OK, 1 row affected (0.00 sec)&#10;&#10;mysql&#62; grant all privileges on test_ssl.* to &#39;test_user&#39;@&#39;%&#39; identified by &#39;testpass&#39; require ssl;&#10;Query OK, 0 rows affected (0.10 sec)</span><br></pre></td></tr></table></figure>
+<p>Kemudian, tambahkan konfigurasi berikut pada fail konfigurasi mysql (<code>/etc/mysql/conf.d/ssl.cnf</code>):-</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[client]&#10;ssl-cert=/etc/mysql/client-cert.pem&#10;ssl-key=/etc/mysql/client-key.pem&#10;&#10;[mysqld]&#10;ssl-ca=/etc/mysql/ca-cert.pem&#10;ssl-cert=/etc/mysql/server-cert.pem&#10;ssl-key=/etc/mysql/server-key.pem</span><br></pre></td></tr></table></figure>
+<p>Restart MySQL server:-</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo service mysql restart</span><br></pre></td></tr></table></figure>
+<p>Untuk menguji sambungan SSL ini menggunakan PHP, gunakan kod berikut:-</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="preprocessor">&lt;?php</span></span><br><span class="line">ini_set (<span class="string">'error_reporting'</span>, E_ALL);</span><br><span class="line">ini_set (<span class="string">'display_errors'</span>, <span class="string">'1'</span>);</span><br><span class="line">error_reporting (E_ALL|E_STRICT);</span><br><span class="line"></span><br><span class="line"><span class="variable">$db</span> = mysqli_init();</span><br><span class="line">mysqli_options (<span class="variable">$db</span>, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, <span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line"><span class="variable">$db</span>-&gt;ssl_set(<span class="string">'/etc/ssl/mysql/client-key.pem'</span>, <span class="string">'/etc/ssl/mysql/client-cert.pem'</span>, <span class="string">'/etc/ssl/mysql/ca-cert.pem'</span>, <span class="keyword">NULL</span>, <span class="keyword">NULL</span>);</span><br><span class="line"><span class="variable">$link</span> = mysqli_real_connect (<span class="variable">$db</span>, <span class="string">'10.0.3.154'</span>, <span class="string">'test_user'</span>, <span class="string">'testpass'</span>, <span class="string">'test_ssl'</span>, <span class="number">3306</span>, <span class="keyword">NULL</span>, MYSQLI_CLIENT_SSL);</span><br><span class="line"><span class="keyword">if</span> (!<span class="variable">$link</span>)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">die</span> (<span class="string">'Connect error ('</span> . mysqli_connect_errno() . <span class="string">'): '</span> . mysqli_connect_error() . <span class="string">"\n"</span>);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="variable">$res</span> = <span class="variable">$db</span>-&gt;query(<span class="string">'SHOW TABLES;'</span>);</span><br><span class="line">    print_r (<span class="variable">$res</span>);</span><br><span class="line">    <span class="variable">$db</span>-&gt;close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Anda seterusnya boleh menyalin (copy) fail <code>client-key.pem</code>, <code>client-cert.pem</code> dan <code>ca-cert.pem</code> ke mana-mana host yang perlukan sambungan MySQL melalui SSL.</p>
+<h2 id="Rujukan:-">Rujukan:-</h2><ul>
+<li><a href="http://www.madirish.net/214" target="_blank" rel="external">http://www.madirish.net/214</a></li>
+<li><a href="http://serverfault.com/questions/622317/mysql-ssl-bad-other-signature-confirmation" target="_blank" rel="external">http://serverfault.com/questions/622317/mysql-ssl-bad-other-signature-confirmation</a></li>
+<li><a href="http://stackoverflow.com/questions/9738712/connect-to-remote-mysql-server-with-ssl-from-php" target="_blank" rel="external">http://stackoverflow.com/questions/9738712/connect-to-remote-mysql-server-with-ssl-from-php</a></li>
+</ul>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>Mulakan dengan menjana certificate dalam folder <code>/etc/ssl/mysql</code>:-</p>
+<figure class="highlight plain"><table><tr><td class="g]]>
+    </summary>
+    
+      <category term="mysql" scheme="http://belajar.github.io/tags/mysql/"/>
+    
+      <category term="php" scheme="http://belajar.github.io/tags/php/"/>
+    
+      <category term="ssl" scheme="http://belajar.github.io/tags/ssl/"/>
+    
+      <category term="DevOps" scheme="http://belajar.github.io/categories/DevOps/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[Kenapa Kena Belajar Bahasa Inggeris ?]]></title>
+    <link href="http://belajar.github.io/programming/kenapa-kena-belajar-bahasa-inggeris.html"/>
+    <id>http://belajar.github.io/programming/kenapa-kena-belajar-bahasa-inggeris.html</id>
+    <published>2015-05-23T21:28:44.000Z</published>
+    <updated>2015-05-31T07:36:37.000Z</updated>
+    <content type="html"><![CDATA[<p>Bidang pembangunan perisian adalah satu bidang kerjaya yang unik berbanding bidang-bidang lain. Kenapa saya kata begitu ? Kita ambil satu contoh yang mudah dan sentiasa menjadi elemen penting dalam kerjaya - pengalaman.</p>
+<p>Pengalaman adalah satu dilema bagi mereka yang ingin memulakan kerjaya. Orang putih kata ‘chicken and egg problem’. Majikan ingin mendapatkan pekerja yang mempunyai pengalaman tetapi jika mereka tidak diberi peluang untuk memulakan kerjaya, bagaimana mereka mahu mendapatkan pengalaman ?</p>
+<p>Contohnya, jika anda memohon pekerjaan sebagai seorang jurutera awam disebuah syarikat pembinaan dan jawatan tersebut memerlukan sekurang-kurangnya 3 tahun pengalaman dalam bidang kejuruteraan awam. Jika anda baru sahaja keluar universiti bagaimana anda boleh ada pengalaman dalam sebuah projek pembinaan jalan raya, jambatan atau bangunan selama 3 tahun ? Latihan industri paling lama hanya 6 bulan, dan selebihnya banyak dihabiskan dalam kuliah di universiti, bukan di tapak projek ataupun dalam team yang membangunkan projek KLCC, Putrajaya, MRT, Second Link Expressway dan sebagainya.</p>
+<p>Namun dalam pembangunan perisian, ia bukannya satu isu. Seawal anda menjejakkan kaki ke universiti (atau lebih awal daripada itu), anda sudah boleh melibatkan diri dalam projek perisian mega seperti Linux Kernel, BSD OS, Android, Firefox, Chrome, Wordpress, Drupal, Laravel, Django, Ruby on Rails dan banyak lagi. Anda boleh bermula mungkin dengan hanya membantu mereka yang lain yang turut ingin belajar (<em>user support</em>), kemudian dengan menyumbang kepada dokumentasi-dokumentasi projek tersebut dan seterusnya menjadi developer yang aktif dalam pembangunan kod sekali.</p>
+<p>Semuanya terbuka luas untuk anda sertai, tanpa perlu melalui sebarang <em>interview</em> atau memerlukan surat sokongan daripada mana-mana pihak. Apa yang anda perlu kuasai cuma satu, (mungkin dua) - Bahasa Inggeris (BI) dan kemahiran menyampaikan idea anda melalui tulisan. Yang kedua boleh diasah dan dikuasai secara perlahan-lahan.</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>Bidang pembangunan perisian adalah satu bidang kerjaya yang unik berbanding bidang-bidang lain. Kenapa saya kata begitu ? Kita ambil satu]]>
+    </summary>
+    
+      <category term="bi" scheme="http://belajar.github.io/tags/bi/"/>
+    
+      <category term="Programming" scheme="http://belajar.github.io/categories/programming/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[QnA: Soalan berkaitan DNS, CNAME]]></title>
+    <link href="http://belajar.github.io/devops/qna-soalan-dns-cname.html"/>
+    <id>http://belajar.github.io/devops/qna-soalan-dns-cname.html</id>
+    <published>2015-05-19T02:02:51.000Z</published>
+    <updated>2015-05-31T07:36:37.000Z</updated>
+    <content type="html"><![CDATA[<p>OP:-</p>
+<blockquote>
+<p>sedang mencari solution macam mana nak buat setting macam blogger tue.
+Develop system , then user boleh provide custom domain yang akan point pada subdomain pada web system tadi.</p>
+<p>Ada idea macam mana nak buat ?</p>
+</blockquote>
+<p>Just set a wildcard domain *.yourdomain.com -&gt; your ip. Each user get their own subdomain.yourdomain.com. If they want custom domain, they can set a CNAME userdomain.com -&gt; subdomain.yourdomain.com.</p>
+<p>On your application side, there are number of ways to handle the request.</p>
+<ol>
+<li><p>Use apache virtualhost to handle each domain - tedious. For every new subdomain, you have to add new vhost config.</p>
+</li>
+<li><p>Handle the mapping for subdomain in your app - look for HOST header to determine what subdomain to handle. All subdomain being served from single virtualhost.</p>
+</li>
+</ol>
+<p>CNAME basically an alias. Cth kamal.page.com adalah CNAME kepada very-long-domain.aws-southeast-1.com. Bila client cuba request kamal.page.com, dns akan tau subdomain tersebut adalah CNAME kepada very-long-domain.aws-southeast-1.com jadi dia akan query very-long-domain.aws-southeast-1.com utk dapatkan ip address.</p>
+<p>CNAME juga digunakan utk memudahkan pengurusan dns. Katakan kita ada 3 subdomain - web1.page.com, web2.page.com, web3.page.com. Kalau kita point ketiga-tiga subdomain ini terus kepada IP address (A record), maka setiap kali kita tukar IP, kita kena update ketiga-tiga subdomain tersebut. Jadi biasanya orang akan gunakan CNAME spt:-</p>
+<p>page.com IN A 69.90.210.213
+web1.page.com CNAME page.com
+web2.page.com CNAME page.com
+web3.page.com CNAME page.com</p>
+<p>Manakala bila kita point subdomain kepada IP, ia akan kelihatan spt:-</p>
+<p>page.com IN A 69.90.210.213
+web1.page.com IN A 69.90.210.213
+web2.page.com IN A 69.90.210.213
+web3.page.com IN A 69.90.210.213</p>
+<p>Kita dapat lihat dalam contoh di atas bila mana guna A record, setiap kali berlaku perubahan IP, kita kena update semua subdomain yang ada manakala yang guna CNAME, cuma perlu update main A record. Keburukan CNAME adalah resolving dns kepada ip mengambil masa yang lebih lama sebab client akan request subdomain terlebih dahulu, dapat record CNAME, kemudian query CNAME utk dapatkan IP.</p>
+<p>OP:-</p>
+<blockquote>
+<p>Katakan saya ada domain page.com yang telah di setting name server.
+Kemudian , saya buat CNAME
+test.test.com CNAME page.com
+Adakah pada domain page.com wajib ada A Record atau Name server sudah memadai ?</p>
+</blockquote>
+<p>Saya tak pasti apa yang dimaksudkan dengan ‘Name server’. Ada beberapa jenis rekod dalam dns - A record, NS record, MX record, CNAME, TXT record etc. NS record cuma apply jika kita host dns server sendiri. Cuba fahamkan terlebih bagaimana dns berfungsi, secara ringkas:-</p>
+<ol>
+<li><p>Kita daftar domain page.com dgn registrar - katakan Namecheap. Namecheap bagi kita control panel utk manage domain tersebut. Dalam control panel tersebut kita boleh nyatakan apakah dns server yang boleh resolv domain tersebut kepada IP address.</p>
+</li>
+<li><p>Katakan kita guna dns server daripada zenpipe dan zenpipe publish dns server mereka sebagai ns1.zenpipe.com. Jadi kita pun masukkan dalam control panel Namecheap ns1.zenpipe.com. Sekarang bila client cuba resolve domain page.com, dia tau dia perlu rujuk kepada ns1.zenpipe.com.</p>
+</li>
+<li><p>Zenpipe juga akan sediakan control panel utk kita manage dns record bagi page.com. Setelah login ke control panel zenpipe, kita boleh mula setup domain record utk page.com.</p>
+</li>
+<li><p>Mula2 sekali kita kena tentukan page.com nak point ke IP address mana ? Maka rekod dns kita buat permulaan mungkin seperti berikut.</p>
+</li>
+</ol>
+<p>page.com IN A 100.22.22.22</p>
+<ol>
+<li><p>Setiap domain perlu ada sekurang-kurangnya satu A record supaya domain tu point to something.</p>
+</li>
+<li><p>Setelah set A record, mungkin kita ada setup website baru - shop.page.com. Seperti yang dibincangkan sebelum ini, oleh kerana shop.page.com turut di host di server yang sama, maka kita cuma perlu setup CNAME kepada page.com.</p>
+</li>
+</ol>
+<p>shop.page.com CNAME page.com</p>
+<ol>
+<li>Ada buat website baru lagi, oleh kerana website ini agak besar, kita setup satu server baru dgn ip address 100.22.22.45. Maka kita tambah rekod dns seperti berikut:-</li>
+</ol>
+<p>bigsite.page.com IN A 100.22.22.45</p>
+<ol>
+<li>Server yang digunakan utk host bigsite.page.com turut digunakan utk host support.page.com maka kita boleh setup CNAME spt berikut:-</li>
+</ol>
+<p>support.page.com CNAME bigsite.page.com</p>
+<ol>
+<li>Setup satu website baru tapi guna service hosting kat test.test.com tapi test.com benarkan kita guna custom domain jadi boleh point custom domain tersebut kepada test.test.com:-</li>
+</ol>
+<p>blog.page.com CNAME test.test.com</p>
+<p>Akhir sekali rekod dns kita akan kelihatan spt berikut:-</p>
+<p>page.com IN A 100.22.22.22
+shop.page.com CNAME page.com
+bigsite.page.com IN A 100.22.22.45
+support.page.com CNAME bigsite.page.com
+blog.page.com CNAME test.test.com</p>
+<p>Nampak tak kaitan antara A record dan CNAME ?</p>
+<p>Diskusi asal - <a href="https://www.facebook.com/paanblogger/posts/10201607041688516?comment_id=84600092" target="_blank" rel="external">https://www.facebook.com/paanblogger/posts/10201607041688516?comment_id=84600092</a></p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>OP:-</p>
+<blockquote>
+<p>sedang mencari solution macam mana nak buat setting macam blogger tue.
+Develop system , then user boleh provide ]]>
+    </summary>
+    
+      <category term="cname" scheme="http://belajar.github.io/tags/cname/"/>
+    
+      <category term="dns" scheme="http://belajar.github.io/tags/dns/"/>
+    
+      <category term="Devops" scheme="http://belajar.github.io/categories/devops/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[Bagaimana web development dalam Python ?]]></title>
+    <link href="http://belajar.github.io/python/bagaimana-web-development-dalam-python.html"/>
+    <id>http://belajar.github.io/python/bagaimana-web-development-dalam-python.html</id>
+    <published>2015-05-18T18:56:39.000Z</published>
+    <updated>2015-05-31T07:36:37.000Z</updated>
+    <content type="html"><![CDATA[<p>Bila bercakap pasal topik web development, mungkin ramai di kalangan developer yang sudah biasa dengan bahasa pengaturcaraan PHP yang memang banyak digunakan untuk membangunkan aplikasi web. Python juga boleh digunakan untuk membangunkan … Saya akan cuba tunjukkan sepintas lalu bagaimana proses pembangunan aplikasi web dalam Python dilakukan.</p>
+<p>Terdapat agak banyak <em>framework</em> yang boleh digunakan untuk membangunkan aplikasi web dalam Python. Anda mungkin akan terjumpa dengan nama-nama seperti Django, Flask, Pyramid, Web2py, Bottle dan sebagainya. Untuk tulisan ini bagaimana pun saya hanya akan menggunakan Django sebagai contoh memandangkan ia antara yang paling popular.</p>
+<p>Django pertama kali diterbitkan pada tahun 2005, hampir 10 tahun yang lalu. Ianya hampir seusia dengan satu lagi <em>framework</em> yang amat popular di kalangan komuniti bahasa pengaturcaraan Ruby iaitu Ruby On Rails (RoR). Django berasal daripada aplikasi yang digunakan oleh sebuah syarikat penerbitan online iaitu Lawrence Journal-World untuk membangunkan laman-laman web mereka. Aplikasi tersebut kemudian di’refactor’ kepada sebuah <em>framework</em> yang diterbitkan di bawah lesen Sumber Terbuka (Open Source).</p>
+<h2 id="Permulaan">Permulaan</h2><p>Development dalam Django dimulakan dengan membina struktur asas aplikasi yang hendak dibangunkan. Ia boleh dicapai dengan menggunakan <em>command line tools</em> yang disediakan oleh Django. Ia kelihatan seperti berikut:-</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">django-admin startproject blog</span><br></pre></td></tr></table></figure>
+<p>Arahan di atas akan menghasilkan <em>folder</em> dalam struktur seperti berikut:-</p>
+<p><img src="http://i.imgur.com/saUI4NO.png">
+<img src="http://i.imgur.com/oLqzu4p.png"></p>
+<h2 id="Development_server">Development server</h2><p>Web development adalah satu bentuk pembangunan aplikasi dalam model <em>client-server</em>. Aplikasi yang dibangunkan biasanya adalah server dan diakses melalui <em>client</em> seperti <em>web browser</em>. Oleh itu perlu kepada satu aplikasi <em>server</em> yang akan menjalankan aplikasi yang dibangunkan. Dalam platform PHP, <em>server</em> yang biasa digunakan adalah Apache HTTP Server (Apache). Ia bagaimana pun memerlukan proses konfigurasi yang melecehkan dan mengambil masa <em>developer</em>. Hanya dalam versi kebelakangan ini PHP turut menyediakan <em>development server</em>.</p>
+<p>Aplikasi Django boleh dijalankan (untuk proses development sahaja) melalui arahan berikut:-</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python manage.py runserver</span><br></pre></td></tr></table></figure>
+<h2 id="Routing">Routing</h2><p><em>Routing</em> adalah satu proses <em>mapping</em> antara <em>url path</em> dengan <em>code</em> yang hendak dijalankan dalam sebuah aplikasi web. Konsep <em>routing</em> tidak begitu diketahui dalam platform PHP kecuali akhir-akhir ini apabila penggunaan <em>framework</em> seperti Laravel, Yii, CakePHP, Codeigniter dan lain-lain. <em>Routing</em> dalam PHP dilakukan secara <em>implicit</em> di mana URL itu sendiri mengandungi nama <em>script</em> yang hendak dijalankan. Contohnya anda akan biasa jumpa URL seperti berikut:-</p>
+<ul>
+<li><a href="http://www.website.com/index.php" target="_blank" rel="external">http://www.website.com/index.php</a></li>
+<li><a href="http://www.website.com/article.php" target="_blank" rel="external">http://www.website.com/article.php</a></li>
+</ul>
+<p>Dalam Django, proses <em>routing</em> dilakukan secara <em>explicit</em> dan developer harus <em>define</em> bagaimana sesuatu URL itu hendak dipadankan dengan <em>code</em> yang hendak dijalankan. Ia dinyatakan dalam fail <code>urls.py</code> seperti berikut:-</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">from django.conf.urls import include, url&#10;from django.contrib import admin&#10;&#10;urlpatterns = [&#10;    # Examples:&#10;    url(r&#39;^$&#39;, &#39;blog.views.home&#39;, name=&#39;home&#39;),&#10;    url(r&#39;^blog/&#39;, include(&#39;blog.urls&#39;)),&#10;&#10;    url(r&#39;^admin/&#39;, include(admin.site.urls)),&#10;]</span><br></pre></td></tr></table></figure>
+<p>Dalam contoh di atas, URL seperti <a href="http://localhost:8000/" target="_blank" rel="external">http://localhost:8000/</a> akan dikendalikan oleh <em>module</em> bernama <code>blog.views.home</code>, manakala URL seperti <a href="http://localhost:8000/blog/" target="_blank" rel="external">http://localhost:8000/blog/</a> pula akan dikendalikan oleh <em>urls.py</em> yang lain - satu bentuk <em>nested routing</em>.</p>
+<h2 id="Output_/_Response_/_Template">Output / Response / Template</h2><p>Dalam PHP, untuk memaparkan output anda hanya perlu menggunakan arahan <code>print</code> atau <code>echo</code> seperti berikut:-</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo &#39;Hello world&#39;;</span><br></pre></td></tr></table></figure>
+<p>Dalam Django, contoh <em>code</em> yang akan memaparkan output seperti di atas adalah:-</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">from django.http import HttpResponse&#10;&#10;def home(request):&#10;    return HttpResponse(&#39;Hello world&#39;)</span><br></pre></td></tr></table></figure>
+<p>Oleh kerana Python bukan bersifat <em>template language</em> seperti PHP, mengeluarkan output dalam bentuk HTML seperti di atas adalah satu proses melecehkan, satu bentuk <em>template language</em> khas disediakan oleh Django. Jadi output yang sama menggunakan <em>template language</em> adalah seperti berikut:-</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">from django.shortcuts import render&#10;&#10;def home(request):&#10;    context = &#123;&#10;        &#39;data&#39;: &#39;Hello world&#39;,&#10;    &#125;&#10;    return render(request, &#39;home.html&#39;, context)</span><br></pre></td></tr></table></figure>
+<p>Dan <code>home.html</code> mungkin kelihatan seperti berikut:-</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#60;html&#62;&#10;&#60;body&#62;&#10;&#123;&#123; data &#125;&#125;&#10;/body&#62;&#10;&#60;/html&#62;</span><br></pre></td></tr></table></figure>
+<h2 id="Database_/_ORM">Database / ORM</h2><p>Dalam Python, interaksi kepada database adalah melalui <em>driver</em> spesifik bagi setiap database seperti SQLite, MySQL atau PostgreSQL. API bagi setiap <em>driver</em> tersebut adalah seragam. Ia kelihatan seperti berikut:-</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cursor = db.cursor()&#10;cursor.execute(&#39;SELECT * from articles&#39;)&#10;for row in cursor.fetchall():&#10;    print row[&#39;title&#39;]</span><br></pre></td></tr></table></figure>
+<p>Cara di atas bagaimana pun dianggap sangat <em>low-level</em>. Pada kebanyakkan masa, Python developer akan menggunakan ORM seperti
+SQLAlchemy untuk melakukan interaksi antara database. Django turut menyediakan ORMnya sendiri. Langkah pertama dalam interaksi
+database adalah dengan membina <code>models</code> berkaitan objek yang kita ingin simpan ke dalam database. Ia kelihatan seperti berikut:-</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">from django.db import models&#10;&#10;class Article(models.Model):&#10;    title = models.CharField(max_lenght=255)&#10;    body = models.TextField()&#10;&#10;class Comment(models.Model):&#10;    body = models.TextField()&#10;    article = models.ForeignKey(Article)</span><br></pre></td></tr></table></figure>
+<p>Seterusnya kita jalankan arahan berikut untuk membina <em>table</em> berkaitan (jika ia masih belum dibina):-</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python manage.py migrate</span><br></pre></td></tr></table></figure>
+<p>Satu fungsi yang amat berguna dalam Django adalah <em>shell</em> yang boleh digunakan untuk bereksperimentasi dengan models-models di atas.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python manage.py shell</span><br></pre></td></tr></table></figure>
+<p>Dan anda akan mendapat <em>console</em> seperti berikut:-</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#62;&#62;&#62; from blog.models import Article, Comment&#10;&#62;&#62;&#62; Article.objects.all() # show all articles&#10;[]&#10;&#62;&#62;&#62; a = Article(title=&#39;Hello&#39;, body=&#39;Some body ...&#39;)&#10;&#62;&#62;&#62; a.save()&#10;&#62;&#62;&#62; a.comment_set.all() # show all comments for this article&#10;[]</span><br></pre></td></tr></table></figure>
+<h2 id="Debugger">Debugger</h2><p><em>Debugging</em> adalah proses yang perlu dilalui oleh semua programmer. Oleh itu mempunyai mekanisma <em>debugging</em> yang canggih akan sangat membantu dalam proses <em>development</em>. Python sendiri didatangkan dengan <em>built-in</em> <em>debugger</em> yang cukup <em>simple</em>. Dalam setiap program Python, anda boleh meletakkan <em>code berikut</em>:-</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">import pdb;pdb.set_trace()</span><br></pre></td></tr></table></figure>
+<p>Dan program tersebut akan dihentikan sementara (<em>pause</em>) bagi membolehkan anda untuk <em>inspect</em> <em>variables</em> pada baris tersebut. Manakala untuk <em>web development</em> konsep di atas telah dikembangkan lagi untuk membolehkan anda melakukan <em>debugging</em> melalui <em>browser</em>. Apabila berlaku <em>error</em> pada aplikasi anda, <em>web debugger</em> tersebut akan dipaparkan bagi membolehkan anda melakukan <em>inspection</em> terus daripada browser. Page <em>debugger</em> tersebut adalah seperti berikut:-</p>
+<p><img src="http://i.imgur.com/PclDVtU.png"></p>
+<h2 id="Penutup">Penutup</h2><p>Di atas adalah pandangan sepintas lalu bagaimana proses <em>development</em> dalam Python dijalankan. Jika anda berminat untuk mengetahui lebih lanjut boleh ajukan melalui ruangan komen di bawah atau melalui <a href="https://www.facebook.com/groups/belajarprogramming/" target="_blank" rel="external">grup Facebook</a> kami.</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>Bila bercakap pasal topik web development, mungkin ramai di kalangan developer yang sudah biasa dengan bahasa pengaturcaraan PHP yang mem]]>
+    </summary>
+    
+      <category term="django" scheme="http://belajar.github.io/tags/django/"/>
+    
+      <category term="python" scheme="http://belajar.github.io/tags/python/"/>
+    
+      <category term="Python" scheme="http://belajar.github.io/categories/python/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[4 Cara Define Function]]></title>
+    <link href="http://belajar.github.io/javascript/4-cara-define-function.html"/>
+    <id>http://belajar.github.io/javascript/4-cara-define-function.html</id>
+    <published>2015-03-30T16:00:00.000Z</published>
+    <updated>2015-05-31T07:36:37.000Z</updated>
+    <content type="html"><![CDATA[<p>Semua bahasa pengaturcaraan mempunyai komponen yang dinamakan <em>function</em> yang fungsi utamanya
+adalah untuk merangkumkan beberapa arahan ke dalam satu unit yang boleh digunakan berulang-kali.
+Ia dapat mengelakkan pengulangan kod yang sama dalam aturcara kita.</p>
+<p>Dalam JavaScript, <em>function</em> boleh dikatakan salah satu daripada sumber kekuatannya kerana ia dapat
+digunakan untuk tujuan berikut:-</p>
+<ul>
+<li><em>Code reuse</em> - Mengelakkan pengulangan kod yang sama.</li>
+<li><em>Information hiding</em> - Menghadkan akses kepada sesuatu <em>variable</em> daripada bahagian lain aturcara.
+Dalam bahasa <em>object-oriented</em> lain seperti Java, ia dipanggil private variable.</li>
+<li>Composition - Beberapa <em>function</em> digabungkan bersama bagi membentuk satu set <em>functionality</em> bagi
+sesuatu objek.</li>
+</ul>
+<p>Untuk tulisan ini bagaimana pun saya cuma ingin menyenaraikan 4 cara atau <em>pattern</em> yang biasa digunakan
+untuk define <em>function</em> dalam JavaScript. Berkaitan kegunaan-kegunaan <em>function</em> itu sendiri, saya akan
+cuba sentuh dalam tulisan akan datang, Insya Allah.</p>
+<a id="more"></a>
+<h2 id="Cara_1_-_Function_statement">Cara 1 - Function statement</h2><p>Ini adalah cara yang paling biasa:-</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">add</span>(<span class="params">num1, num2</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> num1 + num2;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Dalam kaedah ini, kita gunakan <em>keyword</em> <code>function</code> dan diikuti dengan nama bagi <em>function</em> tersebut.
+Satu perkara yang perlu kita ingati di sini ialah cara menulis <em>function</em> seperti ini tertakhluk kepada
+satu <em>behavior</em> JavaScript yang dipanggil ‘hoisting’. Contohnya code dibawah adalah betul:-</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">1</span>, <span class="number">2</span>);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">add</span>(<span class="params">num1, num2</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> num1 + num2;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Ya, anda boleh memanggil <em>function</em> sebelum ia diisytiharkan. Ini kerana apabila dijalankan, JavaScript akan
+menjalakannya seperti berikut:-</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">add</span>(<span class="params">num1, num2</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> num1 + num2;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">add(<span class="number">1</span>, <span class="number">2</span>);</span><br></pre></td></tr></table></figure>
+<p>Kesemua definisi <em>function</em> akan sentiasa dipindahkan ke atas oleh JavaScript.</p>
+<h2 id="Cara_2_-_Function_expression">Cara 2 - Function expression</h2><p>Cara ini menggunakan <em>anonymous</em> function yang dirujuk kepada <em>variable</em>:-</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> add = <span class="function"><span class="keyword">function</span>(<span class="params">num1, num2</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> num1 + num2;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Cara ini tidak tertakhluk kepada <em>hoisting</em> seperti sebelum ini jadi jika anda cuba define
+function anda seperti berikut:-</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(add(<span class="number">1</span>, <span class="number">2</span>));</span><br><span class="line"><span class="keyword">var</span> add = <span class="function"><span class="keyword">function</span> (<span class="params">num1, num2</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> num1 + num2;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Anda akan mendapat <code>TypeError: undefined is not a function</code>. <em>Variable</em> <code>add</code> bagaimana pun masih tertakhluk kepada
+hoisting, jadi code sebenar yang dijalankan oleh JavaScript adalah seperti berikut:-</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> add = <span class="literal">undefined</span>;</span><br><span class="line"><span class="built_in">console</span>.log(add(<span class="number">1</span>, <span class="number">2</span>));</span><br><span class="line">add = <span class="function"><span class="keyword">function</span> (<span class="params">num1, num2</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> num1 + num2;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><em>Function expression</em> memang digunakan secara meluas namun satu keburukkannya adalah ia menyusahkan proses
+debugging kerana function tersebut adalah <em>anonymous</em> - tidak mempunyai sebarang nama.</p>
+<h2 id="Cara_3_-_Immediately_invoked_function">Cara 3 - Immediately invoked function</h2><p>Ini juga anda akan biasa jumpa dalam banyak code JavaScript:-</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    alert(<span class="string">'hello world'</span>);</span><br><span class="line">&#125;());</span><br></pre></td></tr></table></figure>
+<p>Tujuan utama cara ini digunakan adalah untuk mengelakkan penambahan <em>variable</em> baru yang tidak diperlukan ke dalam
+skop global JavaScript.</p>
+<p>Cara ini sangat berguna untuk kita mengawal skop program, contohnya untuk <em>alias</em> variable yang panjang namanya
+kepada variable yang lebih pendek tapi terhad kepada skop function tersebut sahaja.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function"><span class="keyword">function</span> (<span class="params">$</span>) </span>&#123;</span><br><span class="line">    $(<span class="string">'form#order'</span>).submit(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        ...  </span><br><span class="line">    &#125;);</span><br><span class="line">&#125;(jQuery));</span><br></pre></td></tr></table></figure>
+<p>Di luar daripada <em>function</em> objek sebenar dipanggil <em>jQuery</em> tapi dalam function di atas kita boleh mengakses
+objek tersebut melalui nama <code>$</code>.</p>
+<h1 id="Cara_4_-_Immediately_invoked_function_(using_+_operator)">Cara 4 - Immediately invoked function (using + operator)</h1><p>Ianya sama dengan nombor <code>#4</code> di atas cuma menggunakan operator <code>+</code> berbanding <code>()</code>. Cara ini saya jumpa dalam
+code Twitter Bootstrap.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">+<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    alert(<span class="string">'hello world'</span>);</span><br><span class="line">&#125;();</span><br></pre></td></tr></table></figure>
+<p>Kedua-dua cara #3 dan #4 digunakan kerana dalam JavaScript code seperti berikut adalah tidak valid:-</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    alert(<span class="string">'hello world'</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Setiap <em>function</em> mesti mempunyai nama (<em>function statement</em>) ataupun jika ianya dalam bentuk <em>function expression</em>, ia mesti dirujuk (<em>assigned</em>) kepada <em>variable</em>. Tetapi kita tidak mahu menambahkan <em>variable</em> baru ke dalam skop global, jadi kita mesti ubah sedikit code tersebut supaya ia kekal sebagai <em>valid expression</em>. Dengan meletakkan <em>function</em> tersebut dalam <em>parantheses</em> <code>()</code> atau pun meletakkan operator <code>+</code> pada sebelum <em>function</em> tersebut, ia menjadikan <em>function</em> itu satu <em>expression</em>. </p>
+<h2 id="Rujukan">Rujukan</h2><ul>
+<li><a href="http://davidbcalhoun.com/2011/different-ways-of-defining-functions-in-javascript-this-is-madness/" target="_blank" rel="external">http://davidbcalhoun.com/2011/different-ways-of-defining-functions-in-javascript-this-is-madness/</a></li>
+<li><a href="http://www.bryanbraun.com/2014/11/27/every-possible-way-to-define-a-javascript-function" target="_blank" rel="external">http://www.bryanbraun.com/2014/11/27/every-possible-way-to-define-a-javascript-function</a></li>
+</ul>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>Semua bahasa pengaturcaraan mempunyai komponen yang dinamakan <em>function</em> yang fungsi utamanya
+adalah untuk merangkumkan beberapa arahan ke dalam satu unit yang boleh digunakan berulang-kali.
+Ia dapat mengelakkan pengulangan kod yang sama dalam aturcara kita.</p>
+<p>Dalam JavaScript, <em>function</em> boleh dikatakan salah satu daripada sumber kekuatannya kerana ia dapat
+digunakan untuk tujuan berikut:-</p>
+<ul>
+<li><em>Code reuse</em> - Mengelakkan pengulangan kod yang sama.</li>
+<li><em>Information hiding</em> - Menghadkan akses kepada sesuatu <em>variable</em> daripada bahagian lain aturcara.
+Dalam bahasa <em>object-oriented</em> lain seperti Java, ia dipanggil private variable.</li>
+<li>Composition - Beberapa <em>function</em> digabungkan bersama bagi membentuk satu set <em>functionality</em> bagi
+sesuatu objek.</li>
+</ul>
+<p>Untuk tulisan ini bagaimana pun saya cuma ingin menyenaraikan 4 cara atau <em>pattern</em> yang biasa digunakan
+untuk define <em>function</em> dalam JavaScript. Berkaitan kegunaan-kegunaan <em>function</em> itu sendiri, saya akan
+cuba sentuh dalam tulisan akan datang, Insya Allah.</p>]]>
+    
+    </summary>
+    
+      <category term="JavaScript" scheme="http://belajar.github.io/categories/javascript/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[Memulakan pengaturcaraan dalam JavaScript]]></title>
+    <link href="http://belajar.github.io/javascript/memulakan-pengaturcaraan-dalam-javascript.html"/>
+    <id>http://belajar.github.io/javascript/memulakan-pengaturcaraan-dalam-javascript.html</id>
+    <published>2015-03-29T16:00:00.000Z</published>
+    <updated>2015-05-31T07:36:37.000Z</updated>
+    <content type="html"><![CDATA[<p>Memulakan pengaturcaraan dalam JavaScript agak mudah kerana boleh dikatakan semua pelayar web (browser) utama
+seperti Google Chrome, Mozilla Firefox, Internet Explorer atau Apple Safari mempunyai sokongan JavaScript. Jadi
+jika anda mempunyai pelayar web di atas, anda boleh mula menulis kod JavaScript serta-merta.</p>
+<a id="more"></a>
+<div class="admonition-info">
+    JavaScript hari ini bagaimanapun tidak lagi terhad untuk dijalankan pada browser sahaja. Ia juga turut
+    digunakan pada <i>server-side</i> melalui teknologi seperti NodeJS dan sebagainya.
+</div>
+<div>&nbsp;</div>
+
+<p>Contohnya jika anda menggunakan Google Chrome, tekan kekunci <em>shortcut</em> Ctrl+Shift+J atau klik pada menu
+utama, dan seterusnya <em>More Tools</em> ==&gt; <em>JavaScript Console</em>. Anda akan mendapat paparan seperti di bawah:-</p>
+<p><img src="http://i.imgur.com/O4Equhd.png"></p>
+<p>Pada bahagian <em>Console</em>, anda boleh cuba taip kod berikut:-</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alert(<span class="string">'hello world'</span>);</span><br></pre></td></tr></table></figure>
+<p>Dan anda akan mendapat <em>pop-up</em> seperti dalam gambar di atas. Anda telah menulis kod JavaScript yang
+pertama !</p>
+<p>Bagaimanapun sudah pasti menulis kod dengan cara ini hanya sesuai untuk menguji beberapa baris kod
+pendek sahaja. Untuk tutorial permulaan yang lebih lengkap, boleh rujuk kepada tulisan berikut:-</p>
+<ul>
+<li><a href="http://www.mydev.my/belajar-javascript-bhg-1.html" target="_blank" rel="external">Belajar JavaScript Bgh 1</a></li>
+<li><a href="http://www.mydev.my/belajar-javascript-bhg-2.html" target="_blank" rel="external">Belajar JavaScript Bgh 2</a></li>
+<li><a href="http://www.mydev.my/belajar-javascript-bhg-3.html" target="_blank" rel="external">Belajar JavaScript Bgh 3</a></li>
+</ul>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>Memulakan pengaturcaraan dalam JavaScript agak mudah kerana boleh dikatakan semua pelayar web (browser) utama
+seperti Google Chrome, Mozilla Firefox, Internet Explorer atau Apple Safari mempunyai sokongan JavaScript. Jadi
+jika anda mempunyai pelayar web di atas, anda boleh mula menulis kod JavaScript serta-merta.</p>]]>
+    
+    </summary>
+    
+      <category term="JavaScript" scheme="http://belajar.github.io/categories/javascript/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[[Draf] - Menguruskan Libraries/Dependencies]]></title>
+    <link href="http://belajar.github.io/programming/urus-libraries.html"/>
+    <id>http://belajar.github.io/programming/urus-libraries.html</id>
+    <published>2015-03-28T16:00:00.000Z</published>
+    <updated>2015-05-31T07:36:37.000Z</updated>
+    <content type="html"><![CDATA[<p>Setiap projek <em>programming</em> sama ada besar atau kecil biasanya tidak hanya mengandungi kod-kod
+aturcara yang ditulis oleh <em>programmer</em> itu sahaja. Ia juga akan turut mengandungi kod aturcara
+yang ditulis oleh pihak ketiga.</p>
+<p>Ini kerana kebanyakkan masalah umum dalam <em>programming</em> biasanya sudah ada penyelesaianya. Dalam
+erti kata lain, sudah wujud kod yang ditulis oleh <em>programmer</em> lain yang dapat menyelesaikan
+masalah tersebut. Apa yang perlu dilakukan adalah mencari kod-kod tersebut dan seterusnya memasukkan
+kod tersebut bersama-sama aturcara yang kita sedang tulis ini.</p>
+<a id="more"></a>
+<p>Setiap bahasa pengaturcaraan mempunyai mekanisma tersendiri untuk memasukkan kod pihak ketiga ini ke dalam
+aturcara kita. Ia biasanya dapat dikenali melalui fungsi seperti <code>import</code>, <code>require</code>, <code>include</code>, <code>load</code>,
+<code>use</code> dan sebagainya.</p>
+<p>Pada mulanya, proses mencari kod-kod pihak ketiga atau biasanya dipanggil <em>libraries</em> ini dilakukan secara
+manual. Maknanya, jika <em>programmer</em> A memerlukan kod berkaitan pemprosesan fail CSV, maka dia mungkin akan
+memulakan proses pencarian di laman enjin carian (<em>search engine</em>) atau bertanyakan di forum-forum berkaitan.
+Proses manual ini pada mulanya memadai namun masalah bermula apabila kod di dalam <em>libraries</em> ini turut
+bergantung kepada kod-kod lain.</p>
+<p>Contohnya A mungkin terjumpa kod <code>easycsv.php</code>. Dia pun memasukkan kod <code>easycsv.php</code> ini ke dalam kod beliau
+tetapi mendapat <em>error</em> seperti:-</p>
+<pre><code>Warning: <span class="built_in">include</span>(basecsv.php): failed <span class="built_in">to</span> <span class="built_in">open</span> stream: No such <span class="built_in">file</span> <span class="operator">or</span> <span class="built_in">directory</span> <span class="operator">in</span> ..
+</code></pre><p>Rupa-rupanya kod <code>easycsv.php</code> turut bergantung kepada kod <code>basecsv.php</code> yang ditulis oleh programmer lain.
+Ini bermakna A perlu kembali mencari di mana hendak mendapatkan kod <code>basecsv.php</code> ini. Jika hanya melibatkan
+satu atau dua <em>libraries</em> sahaja, ia mungkin tidak begitu menyusahkan tapi apabila melibatkan jumlah <em>external
+libraries</em> yang banyak, satu solusi yang lebih baik amat diperlukan.</p>
+<p>Ketiadaan cara yang khusus untuk menyelesaikan masalah di atas akan mendorong <em>programmer</em> untuk mengambil
+tindakan seperti:-</p>
+<ul>
+<li>Tidak menggunakan <em>external libraries</em> - mendorong kepada <em>re-inventing the wheel</em>.</li>
+<li>Tidak mengemaskini <em>external libraries</em> yang digunakan kerana ia memerlukan sekali lagi proses mencari kemaskini
+yang baru.</li>
+<li><em>Copy-and-paste</em> kod antara projek.</li>
+</ul>
+<p>Jika diperhatikan pada proses mencari <em>libraries</em> di atas, kita akan dapati ianya adalah satu bentuk aktiviti rutin yang berulang dan hampir sama. Yang berbeza hanyalah pada nama <em>libraries</em> dan di mana ia dapat diperolehi. Jika <em>libraries</em> ini dapat dikumpulkan di satu tempat dan disusun dalam susunan tertentu, satu program khas dapat ditulis untuk mencari dan memasukkan <em>libraries</em> tersebut ke dalam aplikasi yang kita sedang bina. Daripada sinilah lahirnya konsep <em>package management</em>. </p>
+<p>Masalah <em>A depend on B and B depend on C</em> ini merupakan satu masalah klasik dalam Sains Komputer dan pelbagai
+<em>algorithm</em> telah pun dibina untuk menyelesaikan masalah ini.</p>
+<p><img src="http://i.imgur.com/8tz9TBH.png" class="img-displayed">
+<span class="img-caption"><a href="http://www.electricmonk.nl/log/2008/08/07/dependency-resolving-algorithm/" target="_blank" rel="external">http://www.electricmonk.nl/log/2008/08/07/dependency-resolving-algorithm/</a></span></p>
+<p>Berasaskan <em>algorithm</em> ini, setiap bahasa pengaturcaraan mempunyai <em>tools</em> tersendiri untuk menguruskan <em>libraries
+dependencies</em> ini. Berikut disenaraikan beberapa <em>tools</em> berkenaan:-</p>
+<ul>
+<li>Python - PIP</li>
+<li>PHP - Composer</li>
+<li>.NET - Nuget</li>
+<li>JavaScript - npm, bower</li>
+<li>Haskell - Cabal</li>
+<li>Lua - Luarocks</li>
+<li>Ruby - Rubygems, bundler</li>
+<li>Perl - CPAN</li>
+</ul>
+<h2 id="Rujukan">Rujukan</h2><ul>
+<li><a href="http://en.wikipedia.org/wiki/Dependency_graph" target="_blank" rel="external">http://en.wikipedia.org/wiki/Dependency_graph</a></li>
+<li><a href="https://en.opensuse.org/openSUSE:Libzypp_satsolver" target="_blank" rel="external">https://en.opensuse.org/openSUSE:Libzypp_satsolver</a></li>
+<li><a href="http://sahandsaba.com/understanding-sat-by-implementing-a-simple-sat-solver-in-python.html" target="_blank" rel="external">http://sahandsaba.com/understanding-sat-by-implementing-a-simple-sat-solver-in-python.html</a></li>
+</ul>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>Setiap projek <em>programming</em> sama ada besar atau kecil biasanya tidak hanya mengandungi kod-kod
+aturcara yang ditulis oleh <em>programmer</em> itu sahaja. Ia juga akan turut mengandungi kod aturcara
+yang ditulis oleh pihak ketiga.</p>
+<p>Ini kerana kebanyakkan masalah umum dalam <em>programming</em> biasanya sudah ada penyelesaianya. Dalam
+erti kata lain, sudah wujud kod yang ditulis oleh <em>programmer</em> lain yang dapat menyelesaikan
+masalah tersebut. Apa yang perlu dilakukan adalah mencari kod-kod tersebut dan seterusnya memasukkan
+kod tersebut bersama-sama aturcara yang kita sedang tulis ini.</p>]]>
+    
+    </summary>
+    
+      <category term="Programming" scheme="http://belajar.github.io/categories/programming/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[PHP: Pengenalan kepada Composer]]></title>
+    <link href="http://belajar.github.io/php/pengenalan-kepada-composer.html"/>
+    <id>http://belajar.github.io/php/pengenalan-kepada-composer.html</id>
+    <published>2015-02-04T16:00:00.000Z</published>
+    <updated>2015-05-31T07:36:37.000Z</updated>
+    <content type="html"><![CDATA[<p>Composer adalah tools untuk mendapatkan <em>dependencies</em> bagi projek PHP anda. Sebelum Composer, jika anda ingin menggunakan sebarang <em>library</em> luar, anda perlu download ia terlebih dahulu, unzip (jika dalam bentuk archive), dan kemudian <em>copy</em> ke folder projek anda. Bagaimana pula jika <em>library</em> tersebut turut bergantung kepada <em>library</em> lain ? Ulang semula proses sebelum ini.</p>
+<p>Terlebih dahulu anda perlu install <code>composer</code>. Ia boleh dilakukan melalui <em>command</em> berikut:-</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -sS https://getcomposer.org/installer | php</span><br></pre></td></tr></table></figure>
+<p>Anda akan mendapat <em>output</em> seperti berikut:-</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#!/usr/bin/env php&#10;All settings correct for using Composer&#10;Downloading...&#10;Composer successfully installed to: /home/kamal/php/myshop/composer.phar&#10;Use it: php composer.phar</span><br></pre></td></tr></table></figure>
+<p>Seterusnya, untuk men’download’ <em>library</em> yang anda inginkan, bina fail bernama <code>composer.json</code> seperti berikut:-</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    "<span class="attribute">require</span>": <span class="value">&#123;</span><br><span class="line">        "<span class="attribute">swiftmailer/swiftmailer</span>": <span class="value"><span class="string">"5.3.1"</span></span><br><span class="line">    </span>&#125;</span><br><span class="line"></span>&#125;</span><br></pre></td></tr></table></figure>
+<p>Kemudian, jalankan arahan berikut:-</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">php composer.phar install</span><br></pre></td></tr></table></figure>
+<p>Anda akan mendapat output lebih kurang seperti berikut apabila selesai:-</p>
+<p><a href="http://imgur.com/tVjCE09" target="_blank" rel="external"><img src="http://i.imgur.com/tVjCE09.png" title="source: imgur.com"></a></p>
+<div class="admonition-info">
+    Perhatikan satu folder baru bernama <code>vendor</code> dibina. Ia akan mengandungi kesemua code yang di’download’ melalui <code>composer</code>.
+</div>
+<div>&nbsp;</div>
+
+<p>Setelah <code>composer</code> selesai download, anda boleh mula menggunakan library tersebut dalam <em>script</em> PHP anda dengan hanya menambah baris berikut:-</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="preprocessor">&lt;?php</span></span><br><span class="line"><span class="keyword">require</span> <span class="string">'vendor/autoload.php'</span>;</span><br></pre></td></tr></table></figure>
+<p>Contohnya, bina fail baru bernama <code>mail.php</code> seperti berikut:-</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="preprocessor">&lt;?php</span></span><br><span class="line"><span class="keyword">require</span> <span class="string">'vendor/autoload.php'</span>;</span><br><span class="line"></span><br><span class="line"><span class="variable">$transport</span> = Swift_SmtpTransport::newInstance(<span class="string">'127.0.0.1'</span>, <span class="number">25</span>);</span><br><span class="line"><span class="variable">$mailer</span> = Swift_Mailer::newInstance(<span class="variable">$transport</span>);</span><br><span class="line"></span><br><span class="line"><span class="variable">$message</span> = Swift_Message::newInstance(<span class="string">'Wonderful Subject'</span>)</span><br><span class="line">  -&gt;setFrom(<span class="keyword">array</span>(<span class="string">'john@doe.com'</span> =&gt; <span class="string">'John Doe'</span>))</span><br><span class="line">  -&gt;setTo(<span class="keyword">array</span>(<span class="string">'kamal-test@mailinator.com'</span>))</span><br><span class="line">  -&gt;setBody(<span class="string">'Here is the message itself'</span>)</span><br><span class="line">  ;</span><br><span class="line"></span><br><span class="line"><span class="variable">$result</span> = <span class="variable">$mailer</span>-&gt;send(<span class="variable">$message</span>);</span><br></pre></td></tr></table></figure>
+<p>Dan anda boleh jalankannya melalui <code>php mail.php</code> dan email akan dihantar.</p>
+<h2 id="Lock_file">Lock file</h2><p>Jika anda perasan, setelah selesai menjalankan arahan <code>composer install</code>, satu fail baru bernama <code>composer.lock</code> akan dijana oleh <code>composer</code>. Fail ini berfungsi untuk merekodkan version sebenar <em>libraries</em> yang di’install’ oleh <code>composer</code>. Ini kerana <code>composer.json</code> mungkin ditulis seperti berikut:-</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    "<span class="attribute">require</span>": <span class="value">&#123;</span><br><span class="line">        "<span class="attribute">swiftmailer/swiftmailer</span>": <span class="value"><span class="string">"5.3.1"</span></span>,</span><br><span class="line">        "<span class="attribute">symfony/yaml</span>": <span class="value"><span class="string">"~2.5"</span></span><br><span class="line">    </span>&#125;</span><br><span class="line"></span>&#125;</span><br></pre></td></tr></table></figure>
+<p>Dalam spesifikasi <code>composer.json</code> di atas, versi untuk <code>swiftmailer</code> ditulis secara spesifik manakala versi untuk <code>symfony/yaml</code> ditulis dalam format julat tertentu. <code>~2.5</code> adalah bersamaan dengan <code>&gt;=2.5 &lt; 3.0</code>. Bila <code>composer install</code> dijalankan buat pertama kali (<code>composer.lock</code> masih belum wujud), maka ia akan cuba mendapatkan versi terkini yang ada pada masa tersebut, mengikut julat yang ditetapkan.</p>
+<p>Ini bermakna, jika developer A menjalankan <code>composer install</code> dan mendapat version <code>symfony/yaml 2.5.1</code> dan kemudian version baru dikeluarkan, developer B menjalankan <code>composer install</code> beberapa hari kemudian, dia mungkin akan mendapat version <code>2.5.2</code>. Ini menyebabkan perbezaan kod yang diperolehi oleh developer A dan B yang mungkin akan menyebabkan kekeliruan. Jadi <code>composer.lock</code> akan merekodkan version sebenar yang diperolehi oleh <code>composer</code> semasa ia pertama kali dijalankan dan <code>composer.install</code> seterusnya akan merujuk kepada spesifikasi yang terkandung dalam <code>composer.lock</code>.</p>
+<p>Jadi amat penting sekali untuk <code>composer.lock</code> disertakan sekali ke dalam <em>version control system</em> yang anda gunakan.</p>
+<h2 id="Rujukan">Rujukan</h2><ul>
+<li><a href="https://getcomposer.org/doc/01-basic-usage.md#package-versions" target="_blank" rel="external">https://getcomposer.org/doc/01-basic-usage.md#package-versions</a></li>
+<li><a href="https://blog.engineyard.com/2014/composer-its-all-about-the-lock-file" target="_blank" rel="external">https://blog.engineyard.com/2014/composer-its-all-about-the-lock-file</a> (terima kasih kepada <a href="https://github.com/crynobone" target="_blank" rel="external">Mior Muhammad Zaki</a>).</li>
+</ul>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>Composer adalah tools untuk mendapatkan <em>dependencies</em> bagi projek PHP anda. Sebelum Composer, jika anda ingin menggunakan sebaran]]>
+    </summary>
+    
+      <category term="PHP" scheme="http://belajar.github.io/categories/php/"/>
+    
+  </entry>
+  
+</feed>

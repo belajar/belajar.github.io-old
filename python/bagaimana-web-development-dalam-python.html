@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Bagaimana web development dalam Python ? | Belajar Programming</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Bila bercakap pasal topik web development, mungkin ramai di kalangan developer yang sudah biasa dengan bahasa pengaturcaraan PHP yang memang banyak digunakan untuk membangunkan aplikasi web. Python ju">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Bagaimana web development dalam Python ?">
+<meta property="og:url" content="http://belajar.github.io/python/bagaimana-web-development-dalam-python.html">
+<meta property="og:site_name" content="Belajar Programming">
+<meta property="og:description" content="Bila bercakap pasal topik web development, mungkin ramai di kalangan developer yang sudah biasa dengan bahasa pengaturcaraan PHP yang memang banyak digunakan untuk membangunkan aplikasi web. Python ju">
+<meta property="og:image" content="http://i.imgur.com/saUI4NO.png">
+<meta property="og:image" content="http://i.imgur.com/oLqzu4p.png">
+<meta property="og:image" content="http://i.imgur.com/PclDVtU.png">
+<meta property="og:updated_time" content="2015-05-31T07:36:37.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Bagaimana web development dalam Python ?">
+<meta name="twitter:description" content="Bila bercakap pasal topik web development, mungkin ramai di kalangan developer yang sudah biasa dengan bahasa pengaturcaraan PHP yang memang banyak digunakan untuk membangunkan aplikasi web. Python ju">
+  
+  
+
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+</head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <h1 class="logo-wrap">
+            <a href="/" class="logo"></a>
+          </h1>
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+                <li class="main-nav-list-item" ><a class="main-nav-list-link" href="/">Home</a></li>
+              
+                    <ul class="main-nav-list"><li class="main-nav-list-item"><a class="main-nav-list-link" href="/categories/DevOps/">DevOps</a></li><li class="main-nav-list-item"><a class="main-nav-list-link" href="/categories/devops/">Devops</a></li><li class="main-nav-list-item"><a class="main-nav-list-link" href="/categories/javascript/">JavaScript</a></li><li class="main-nav-list-item"><a class="main-nav-list-link" href="/categories/php/">PHP</a></li><li class="main-nav-list-item"><a class="main-nav-list-link" href="/categories/programming/">Programming</a></li><li class="main-nav-list-item"><a class="main-nav-list-link" href="/categories/python/">Python</a></li></ul>
+                  
+                <li class="main-nav-list-item" ><a class="main-nav-list-link" href="/penulis">Penulis</a></li>
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><input type="hidden" name="sitesearch" value="http://belajar.github.io"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/python/">Python</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-bagaimana-web-development-dalam-python.html" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      Bagaimana web development dalam Python ?
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/python/bagaimana-web-development-dalam-python.html" class="article-date">
+  <time datetime="2015-05-18T18:56:39.000Z" itemprop="datePublished">2015-05-19</time>
+</a>
+      </p>
+      <div class="article-entry" itemprop="articleBody">
+        <p>Bila bercakap pasal topik web development, mungkin ramai di kalangan developer yang sudah biasa dengan bahasa pengaturcaraan PHP yang memang banyak digunakan untuk membangunkan aplikasi web. Python juga boleh digunakan untuk membangunkan … Saya akan cuba tunjukkan sepintas lalu bagaimana proses pembangunan aplikasi web dalam Python dilakukan.</p>
+<p>Terdapat agak banyak <em>framework</em> yang boleh digunakan untuk membangunkan aplikasi web dalam Python. Anda mungkin akan terjumpa dengan nama-nama seperti Django, Flask, Pyramid, Web2py, Bottle dan sebagainya. Untuk tulisan ini bagaimana pun saya hanya akan menggunakan Django sebagai contoh memandangkan ia antara yang paling popular.</p>
+<p>Django pertama kali diterbitkan pada tahun 2005, hampir 10 tahun yang lalu. Ianya hampir seusia dengan satu lagi <em>framework</em> yang amat popular di kalangan komuniti bahasa pengaturcaraan Ruby iaitu Ruby On Rails (RoR). Django berasal daripada aplikasi yang digunakan oleh sebuah syarikat penerbitan online iaitu Lawrence Journal-World untuk membangunkan laman-laman web mereka. Aplikasi tersebut kemudian di’refactor’ kepada sebuah <em>framework</em> yang diterbitkan di bawah lesen Sumber Terbuka (Open Source).</p>
+<h2 id="Permulaan">Permulaan</h2><p>Development dalam Django dimulakan dengan membina struktur asas aplikasi yang hendak dibangunkan. Ia boleh dicapai dengan menggunakan <em>command line tools</em> yang disediakan oleh Django. Ia kelihatan seperti berikut:-</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">django-admin startproject blog</span><br></pre></td></tr></table></figure>
+<p>Arahan di atas akan menghasilkan <em>folder</em> dalam struktur seperti berikut:-</p>
+<p><img src="http://i.imgur.com/saUI4NO.png">
+<img src="http://i.imgur.com/oLqzu4p.png"></p>
+<h2 id="Development_server">Development server</h2><p>Web development adalah satu bentuk pembangunan aplikasi dalam model <em>client-server</em>. Aplikasi yang dibangunkan biasanya adalah server dan diakses melalui <em>client</em> seperti <em>web browser</em>. Oleh itu perlu kepada satu aplikasi <em>server</em> yang akan menjalankan aplikasi yang dibangunkan. Dalam platform PHP, <em>server</em> yang biasa digunakan adalah Apache HTTP Server (Apache). Ia bagaimana pun memerlukan proses konfigurasi yang melecehkan dan mengambil masa <em>developer</em>. Hanya dalam versi kebelakangan ini PHP turut menyediakan <em>development server</em>.</p>
+<p>Aplikasi Django boleh dijalankan (untuk proses development sahaja) melalui arahan berikut:-</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python manage.py runserver</span><br></pre></td></tr></table></figure>
+<h2 id="Routing">Routing</h2><p><em>Routing</em> adalah satu proses <em>mapping</em> antara <em>url path</em> dengan <em>code</em> yang hendak dijalankan dalam sebuah aplikasi web. Konsep <em>routing</em> tidak begitu diketahui dalam platform PHP kecuali akhir-akhir ini apabila penggunaan <em>framework</em> seperti Laravel, Yii, CakePHP, Codeigniter dan lain-lain. <em>Routing</em> dalam PHP dilakukan secara <em>implicit</em> di mana URL itu sendiri mengandungi nama <em>script</em> yang hendak dijalankan. Contohnya anda akan biasa jumpa URL seperti berikut:-</p>
+<ul>
+<li><a href="http://www.website.com/index.php" target="_blank" rel="external">http://www.website.com/index.php</a></li>
+<li><a href="http://www.website.com/article.php" target="_blank" rel="external">http://www.website.com/article.php</a></li>
+</ul>
+<p>Dalam Django, proses <em>routing</em> dilakukan secara <em>explicit</em> dan developer harus <em>define</em> bagaimana sesuatu URL itu hendak dipadankan dengan <em>code</em> yang hendak dijalankan. Ia dinyatakan dalam fail <code>urls.py</code> seperti berikut:-</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">from django.conf.urls import include, url&#10;from django.contrib import admin&#10;&#10;urlpatterns = [&#10;    # Examples:&#10;    url(r&#39;^$&#39;, &#39;blog.views.home&#39;, name=&#39;home&#39;),&#10;    url(r&#39;^blog/&#39;, include(&#39;blog.urls&#39;)),&#10;&#10;    url(r&#39;^admin/&#39;, include(admin.site.urls)),&#10;]</span><br></pre></td></tr></table></figure>
+<p>Dalam contoh di atas, URL seperti <a href="http://localhost:8000/" target="_blank" rel="external">http://localhost:8000/</a> akan dikendalikan oleh <em>module</em> bernama <code>blog.views.home</code>, manakala URL seperti <a href="http://localhost:8000/blog/" target="_blank" rel="external">http://localhost:8000/blog/</a> pula akan dikendalikan oleh <em>urls.py</em> yang lain - satu bentuk <em>nested routing</em>.</p>
+<h2 id="Output_/_Response_/_Template">Output / Response / Template</h2><p>Dalam PHP, untuk memaparkan output anda hanya perlu menggunakan arahan <code>print</code> atau <code>echo</code> seperti berikut:-</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo &#39;Hello world&#39;;</span><br></pre></td></tr></table></figure>
+<p>Dalam Django, contoh <em>code</em> yang akan memaparkan output seperti di atas adalah:-</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">from django.http import HttpResponse&#10;&#10;def home(request):&#10;    return HttpResponse(&#39;Hello world&#39;)</span><br></pre></td></tr></table></figure>
+<p>Oleh kerana Python bukan bersifat <em>template language</em> seperti PHP, mengeluarkan output dalam bentuk HTML seperti di atas adalah satu proses melecehkan, satu bentuk <em>template language</em> khas disediakan oleh Django. Jadi output yang sama menggunakan <em>template language</em> adalah seperti berikut:-</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">from django.shortcuts import render&#10;&#10;def home(request):&#10;    context = &#123;&#10;        &#39;data&#39;: &#39;Hello world&#39;,&#10;    &#125;&#10;    return render(request, &#39;home.html&#39;, context)</span><br></pre></td></tr></table></figure>
+<p>Dan <code>home.html</code> mungkin kelihatan seperti berikut:-</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#60;html&#62;&#10;&#60;body&#62;&#10;&#123;&#123; data &#125;&#125;&#10;/body&#62;&#10;&#60;/html&#62;</span><br></pre></td></tr></table></figure>
+<h2 id="Database_/_ORM">Database / ORM</h2><p>Dalam Python, interaksi kepada database adalah melalui <em>driver</em> spesifik bagi setiap database seperti SQLite, MySQL atau PostgreSQL. API bagi setiap <em>driver</em> tersebut adalah seragam. Ia kelihatan seperti berikut:-</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cursor = db.cursor()&#10;cursor.execute(&#39;SELECT * from articles&#39;)&#10;for row in cursor.fetchall():&#10;    print row[&#39;title&#39;]</span><br></pre></td></tr></table></figure>
+<p>Cara di atas bagaimana pun dianggap sangat <em>low-level</em>. Pada kebanyakkan masa, Python developer akan menggunakan ORM seperti
+SQLAlchemy untuk melakukan interaksi antara database. Django turut menyediakan ORMnya sendiri. Langkah pertama dalam interaksi
+database adalah dengan membina <code>models</code> berkaitan objek yang kita ingin simpan ke dalam database. Ia kelihatan seperti berikut:-</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">from django.db import models&#10;&#10;class Article(models.Model):&#10;    title = models.CharField(max_lenght=255)&#10;    body = models.TextField()&#10;&#10;class Comment(models.Model):&#10;    body = models.TextField()&#10;    article = models.ForeignKey(Article)</span><br></pre></td></tr></table></figure>
+<p>Seterusnya kita jalankan arahan berikut untuk membina <em>table</em> berkaitan (jika ia masih belum dibina):-</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python manage.py migrate</span><br></pre></td></tr></table></figure>
+<p>Satu fungsi yang amat berguna dalam Django adalah <em>shell</em> yang boleh digunakan untuk bereksperimentasi dengan models-models di atas.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python manage.py shell</span><br></pre></td></tr></table></figure>
+<p>Dan anda akan mendapat <em>console</em> seperti berikut:-</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#62;&#62;&#62; from blog.models import Article, Comment&#10;&#62;&#62;&#62; Article.objects.all() # show all articles&#10;[]&#10;&#62;&#62;&#62; a = Article(title=&#39;Hello&#39;, body=&#39;Some body ...&#39;)&#10;&#62;&#62;&#62; a.save()&#10;&#62;&#62;&#62; a.comment_set.all() # show all comments for this article&#10;[]</span><br></pre></td></tr></table></figure>
+<h2 id="Debugger">Debugger</h2><p><em>Debugging</em> adalah proses yang perlu dilalui oleh semua programmer. Oleh itu mempunyai mekanisma <em>debugging</em> yang canggih akan sangat membantu dalam proses <em>development</em>. Python sendiri didatangkan dengan <em>built-in</em> <em>debugger</em> yang cukup <em>simple</em>. Dalam setiap program Python, anda boleh meletakkan <em>code berikut</em>:-</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">import pdb;pdb.set_trace()</span><br></pre></td></tr></table></figure>
+<p>Dan program tersebut akan dihentikan sementara (<em>pause</em>) bagi membolehkan anda untuk <em>inspect</em> <em>variables</em> pada baris tersebut. Manakala untuk <em>web development</em> konsep di atas telah dikembangkan lagi untuk membolehkan anda melakukan <em>debugging</em> melalui <em>browser</em>. Apabila berlaku <em>error</em> pada aplikasi anda, <em>web debugger</em> tersebut akan dipaparkan bagi membolehkan anda melakukan <em>inspection</em> terus daripada browser. Page <em>debugger</em> tersebut adalah seperti berikut:-</p>
+<p><img src="http://i.imgur.com/PclDVtU.png"></p>
+<h2 id="Penutup">Penutup</h2><p>Di atas adalah pandangan sepintas lalu bagaimana proses <em>development</em> dalam Python dijalankan. Jika anda berminat untuk mengetahui lebih lanjut boleh ajukan melalui ruangan komen di bawah atau melalui <a href="https://www.facebook.com/groups/belajarprogramming/" target="_blank" rel="external">grup Facebook</a> kami.</p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://belajar.github.io/python/bagaimana-web-development-dalam-python.html" data-id="ciac60k8d0000cmvdpxz1aocp" class="article-share-link">Share</a>
+        
+          <a href="http://belajar.github.io/python/bagaimana-web-development-dalam-python.html#comments" class="article-comment-link">Comments</a>
+        
+        
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/django/">django</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/python/">python</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>follow:</p>
+    <ul class="social-links">
+      
+        <li><a class="social-tooltip" title="facebook" href="https://www.facebook.com/groups/belajarprogramming/" target="_blank"><i id="icon-facebook" class="icon"></i></a></li>
+      
+        <li><a class="social-tooltip" title="rss" href="/atom.xml" target="_blank"><i id="icon-rss" class="icon"></i></a></li>
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/devops/qna-soalan-dns-cname.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">newer</strong>
+      <p class="article-nav-title">
+        
+          QnA: Soalan berkaitan DNS, CNAME
+        
+      </p>
+      <i class="icon" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/javascript/4-cara-define-function.html" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">older</strong>
+      <p class="article-nav-title">4 Cara Define Function</p>
+      <i class="icon" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+      
+  <div class="widget-wrap widget-list">
+    <h3 class="widget-title">categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/DevOps/">DevOps</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/devops/">Devops</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/javascript/">JavaScript</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/">PHP</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/programming/">Programming</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">Python</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget-wrap widget-float">
+    <h3 class="widget-title">tag cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/bi/" style="font-size: 10px;">bi</a> <a href="/tags/cname/" style="font-size: 10px;">cname</a> <a href="/tags/django/" style="font-size: 10px;">django</a> <a href="/tags/dns/" style="font-size: 10px;">dns</a> <a href="/tags/mysql/" style="font-size: 10px;">mysql</a> <a href="/tags/php/" style="font-size: 10px;">php</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/ssl/" style="font-size: 10px;">ssl</a>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget-wrap">
+    <h3 class="widget-title">recents</h3>
+    <div class="widget">
+      <ul id="recent-post" class="no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/DevOps/">DevOps</a></p>
+              <p class="item-title"><a href="/DevOps/connect-mysql-melalui-ssl-tls.html" class="title">Connect ke MySQL melalui SSL/TLS</a></p>
+              <p class="item-date"><time datetime="2015-05-31T07:44:24.000Z" itemprop="datePublished">2015-05-31</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/programming/">Programming</a></p>
+              <p class="item-title"><a href="/programming/kenapa-kena-belajar-bahasa-inggeris.html" class="title">Kenapa Kena Belajar Bahasa Inggeris ?</a></p>
+              <p class="item-date"><time datetime="2015-05-23T21:28:44.000Z" itemprop="datePublished">2015-05-24</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/devops/">Devops</a></p>
+              <p class="item-title"><a href="/devops/qna-soalan-dns-cname.html" class="title">QnA: Soalan berkaitan DNS, CNAME</a></p>
+              <p class="item-date"><time datetime="2015-05-19T02:02:51.000Z" itemprop="datePublished">2015-05-19</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/python/">Python</a></p>
+              <p class="item-title"><a href="/python/bagaimana-web-development-dalam-python.html" class="title">Bagaimana web development dalam Python ?</a></p>
+              <p class="item-date"><time datetime="2015-05-18T18:56:39.000Z" itemprop="datePublished">2015-05-19</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/javascript/">JavaScript</a></p>
+              <p class="item-title"><a href="/javascript/4-cara-define-function.html" class="title">4 Cara Define Function</a></p>
+              <p class="item-date"><time datetime="2015-03-30T16:00:00.000Z" itemprop="datePublished">2015-03-31</time></p>
+            </div>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon" id="icon-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2015 Kamal Mustafa</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'belajarprogramming';
+  
+  var disqus_url = 'http://belajar.github.io/python/bagaimana-web-development-dalam-python.html';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+<script src="/js/html-patch.js" type="text/javascript"></script>
+<script src="/js/script.js" type="text/javascript"></script>
+
+  </div>
+</body>
+</html>
